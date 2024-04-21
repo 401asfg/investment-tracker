@@ -1,4 +1,11 @@
-package com.example.investmenttracker.model
+package com.example.investmenttracker.model.monetarily_variables
+
+import com.example.investmenttracker.data.VEHICLE_TABLE
+import com.example.investmenttracker.model.DatabaseEntry
+import com.example.investmenttracker.model.DateTime
+import com.example.investmenttracker.model.MonetarilyVariable
+import com.example.investmenttracker.model.PastPrice
+import org.json.JSONObject
 
 /**
  * A vehicle that can be invested in
@@ -6,7 +13,10 @@ package com.example.investmenttracker.model
  * @param id The unique identifier of this vehicle
  * @param currencyId The unique identifier of the currency of this vehicle is in
  */
-class Vehicle(val id: Int, val currencyId: Int) : MonetarilyVariable {
+class Vehicle(
+    val currencyId: Int,
+    id: Int? = null
+) : DatabaseEntry(VEHICLE_TABLE, id), MonetarilyVariable {
     private val pastPrices: MutableMap<DateTime, Float> = mutableMapOf()
 
     /**
@@ -17,7 +27,11 @@ class Vehicle(val id: Int, val currencyId: Int) : MonetarilyVariable {
      * @param pastPrices The prices of this vehicle on specific dates; if multiple past prices have
      * same date, only the past price with the largest index will be kept
      */
-    constructor(id: Int, currencyId: Int, pastPrices: Set<PastPrice>) : this(id, currencyId) {
+    constructor(
+        currencyId: Int,
+        pastPrices: Set<PastPrice>,
+        id: Int? = null
+    ) : this(currencyId, id) {
         pastPrices.forEach { addPastPrice(it) }
     }
 
@@ -60,4 +74,8 @@ class Vehicle(val id: Int, val currencyId: Int) : MonetarilyVariable {
      * @return True if this has no recorded date times; otherwise false
      */
     fun lacksDates(): Boolean = pastPrices.isEmpty()
+
+    override fun buildJSON(): JSONObject {
+        TODO("Not yet implemented")
+    }
 }

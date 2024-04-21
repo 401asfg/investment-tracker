@@ -1,4 +1,10 @@
-package com.example.investmenttracker.model
+package com.example.investmenttracker.model.monetarily_variables
+
+import com.example.investmenttracker.data.INVESTMENT_TABLE
+import com.example.investmenttracker.model.DatabaseEntry
+import com.example.investmenttracker.model.DateTime
+import com.example.investmenttracker.model.MonetarilyVariable
+import org.json.JSONObject
 
 /**
  * A single investment into a vehicle
@@ -12,8 +18,9 @@ package com.example.investmenttracker.model
 class Investment(
     val dateTime: DateTime,
     val principal: Float,
-    val vehicle: Vehicle
-) : MonetarilyVariable {
+    val vehicle: Vehicle,
+    id: Int? = null
+) : DatabaseEntry(INVESTMENT_TABLE, id), MonetarilyVariable {
 
     init {
         if (!vehicle.containsDate(dateTime)) throw IllegalArgumentException(
@@ -37,4 +44,8 @@ class Investment(
         = vehicle.getRateOfReturn(earlierDateTime, laterDateTime)
 
     override fun containsDate(dateTime: DateTime): Boolean = vehicle.containsDate(dateTime)
+
+    override fun buildJSON(): JSONObject {
+        TODO("Not yet implemented")
+    }
 }
