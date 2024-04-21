@@ -7,15 +7,18 @@ package com.example.investmenttracker.model
  * @param investments The investments made in this portfolio
  */
 class Portfolio(val currencyId: Int, val investments: Set<Investment>) : MonetarilyVariable {
-    fun getPriceAt(dateTime: DateTime): Float
-        = investments.sumOf { if (it.containsDate(dateTime)) it.getPriceAt(dateTime) else 0 }
+    override fun getPriceAt(dateTime: DateTime): Float
+        = investments.fold(0f) { sum, investment ->
+            if (investment.containsDate(dateTime)) sum + investment.getPriceAt(dateTime)
+            else sum
+        }
 
-    fun getPriceDifference(earlierDateTime: DateTime, laterDateTime: DateTime): Float
+    override fun getPriceDifference(earlierDateTime: DateTime, laterDateTime: DateTime): Float
         = getPriceAt(laterDateTime) - getPriceAt(earlierDateTime)
 
-    fun getRateOfReturn(earlierDateTime: DateTime, laterDateTime: DateTime): Float
+    override fun getRateOfReturn(earlierDateTime: DateTime, laterDateTime: DateTime): Float
         = getPriceDifference(earlierDateTime, laterDateTime) / getPriceAt(earlierDateTime)
 
-    fun containsDate(dateTime: DateTime): Boolean
+    override fun containsDate(dateTime: DateTime): Boolean
         = investments.any { it.containsDate(dateTime) }
 }
