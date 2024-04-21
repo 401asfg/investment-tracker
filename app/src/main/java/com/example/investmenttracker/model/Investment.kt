@@ -25,7 +25,7 @@ class Investment(
     }
 
     override fun getPriceAt(dateTime: DateTime): Float {
-        val vehicleRateOfReturn = this.vehicle.getRateOfReturn(this.dateTime, dateTime)
+        val vehicleRateOfReturn = vehicle.getRateOfReturn(this.dateTime, dateTime)
         return vehicleRateOfReturn * principal + principal
     }
 
@@ -34,7 +34,7 @@ class Investment(
 
 
     override fun getRateOfReturn(earlierDateTime: DateTime, laterDateTime: DateTime): Float
-        = this.vehicle.getRateOfReturn(earlierDateTime, laterDateTime)
+        = vehicle.getRateOfReturn(earlierDateTime, laterDateTime)
 
-    override fun containsDate(dateTime: DateTime): Boolean = this.vehicle.containsDate(dateTime)
+    override fun containsDate(dateTime: DateTime): Boolean = vehicle.containsDate(dateTime)
 }
