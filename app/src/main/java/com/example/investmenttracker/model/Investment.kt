@@ -31,4 +31,10 @@ class Investment(
 
     override fun getPriceDifference(earlierDateTime: DateTime, laterDateTime: DateTime): Float
         = getPriceAt(laterDateTime) - getPriceAt(earlierDateTime)
+
+
+    override fun getRateOfReturn(earlierDateTime: DateTime, laterDateTime: DateTime): Float
+        = this.vehicle.getRateOfReturn(earlierDateTime, laterDateTime)
+
+    override fun containsDate(dateTime: DateTime): Boolean = this.vehicle.containsDate(dateTime)
 }

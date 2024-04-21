@@ -46,24 +46,13 @@ class Vehicle(val id: Int, val currencyId: Int) : MonetarilyVariable {
         return laterPrice - earlierPrice
     }
 
-    /**
-     * @param earlierDateTime The earlier of the two date times
-     * @param laterDateTime The later of the two date times
-     * @return The rate of return between the later date time and the earlier date time
-     * @throws IllegalArgumentException If this does not contain the given earlierDateTime or the
-     * given laterDateTime
-     */
-    fun getRateOfReturn(earlierDateTime: DateTime, laterDateTime: DateTime): Float
+    override fun getRateOfReturn(earlierDateTime: DateTime, laterDateTime: DateTime): Float
             = getPriceDifference(earlierDateTime, laterDateTime) / pastPrices[earlierDateTime]!!
 
-    /**
-     * @param dateTime The date time to check for
-     * @return True if this has a record of the given date time; otherwise false
-     */
-    fun containsDate(dateTime: DateTime): Boolean = pastPrices.containsKey(dateTime)
+    override fun containsDate(dateTime: DateTime): Boolean = pastPrices.containsKey(dateTime)
 
     /**
-     * @return The number of date times recorded in this
+     * @return The number of distinct date times recorded in this
      */
     fun numDates(): Int = pastPrices.size
 
