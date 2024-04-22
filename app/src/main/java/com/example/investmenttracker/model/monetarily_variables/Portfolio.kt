@@ -42,7 +42,7 @@ class Portfolio(
     override fun containsDate(dateTime: DateTime): Boolean
         = investments.any { it.containsDate(dateTime) }
 
-    override fun toJson(): JSONObject {
+    override fun toJson(foreignKeys: Map<String, Int>): JSONObject {
         TODO("Not yet implemented")
     }
 }

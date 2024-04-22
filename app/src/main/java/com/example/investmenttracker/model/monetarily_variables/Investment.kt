@@ -50,7 +50,7 @@ class Investment(
 
     override fun containsDate(dateTime: DateTime): Boolean = vehicle.containsDate(dateTime)
 
-    override fun toJson(): JSONObject {
+    override fun toJson(foreignKeys: Map<String, Int>): JSONObject {
         TODO("Not yet implemented")
     }
 }
