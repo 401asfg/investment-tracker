@@ -1,12 +1,12 @@
 package com.example.investmenttracker.model
 
 /**
- * Holds a monetary value that changes as time passes
+ * Holds a monetary value, in USD, that changes as time passes
  */
 interface MonetarilyVariable {
     /**
      * @param dateTime The date and time to get the price at
-     * @return The price of this at the given dateTime if the given dateTime is contained;
+     * @return The price of this, in USD, at the given dateTime if the given dateTime is contained;
      * otherwise false
      * @throws IllegalArgumentException If this does not contain the given dateTime
      */

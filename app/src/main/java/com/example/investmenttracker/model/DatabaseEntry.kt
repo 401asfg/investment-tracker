@@ -7,14 +7,21 @@ import org.json.JSONObject
  *
  * @param table The name of the table to save this entry to
  * @param id The id of the row in which to save this entry
+ * @param createdAt The date and time that this entry was created at, in the database
+ * @param updatedAt The date and time that this entry was last update at, in the database
  */
-abstract class DatabaseEntry(val table: String, val id: Int?) {
+abstract class DatabaseEntry(
+    val table: String,
+    val id: Int?,
+    val createdAt: DateTime?,
+    val updatedAt: DateTime?
+) {
     /**
      * @return A json object containing this class' relevant properties
      * @throws IllegalArgumentException If the table does not contain a row corresponding to this
      * entry's id
      */
-    protected abstract fun buildJSON(): JSONObject
+    abstract fun toJson(): JSONObject
 
     /**
      * Saves this entry into this entry's table, at the row with this entry's id; If the id is
@@ -22,7 +29,8 @@ abstract class DatabaseEntry(val table: String, val id: Int?) {
      * table with this entry's information
      */
     fun save() {
-        val json = buildJSON()
+        val json = toJson()
+        // TODO: add id, created at, and updated at to json
         // TODO: implement http post request sender
     }
 }
