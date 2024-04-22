@@ -10,33 +10,35 @@ import org.json.JSONObject
 /**
  * A vehicle that can be invested in
  *
- * @param id The unique identifier of this vehicle
- * @param currencyId The unique identifier of the currency of this vehicle is in
+ * @param id The id of the row in which to save this entry
+ * @param createdAt The date and time that this entry was created at, in the database
+ * @param updatedAt The date and time that this entry was last update at, in the database
  */
 class Vehicle(
-    val currencyId: Int,
-    id: Int? = null
-) : DatabaseEntry(VEHICLE_TABLE, id), MonetarilyVariable {
+    id: Int? = null,
+    createdAt: DateTime? = null,
+    updatedAt: DateTime? = null
+) : DatabaseEntry(VEHICLE_TABLE, id, createdAt, updatedAt), MonetarilyVariable {
     private val pastPrices: MutableMap<DateTime, Float> = mutableMapOf()
 
     /**
      * A vehicle that can be invested in
      *
-     * @param id The unique identifier of this vehicle
-     * @param currencyId The unique identifier of the currency of this vehicle is in
      * @param pastPrices The prices of this vehicle on specific dates; if multiple past prices have
      * same date, only the past price with the largest index will be kept
+     * @param id The id of the row in which to save this entry
+     * @param createdAt The date and time that this entry was created at, in the database
+     * @param updatedAt The date and time that this entry was last update at, in the database
      */
     constructor(
-        currencyId: Int,
         pastPrices: Set<PastPrice>,
-        id: Int? = null
-    ) : this(currencyId, id) {
-        pastPrices.forEach { addPastPrice(it) }
-    }
+        id: Int? = null,
+        createdAt: DateTime? = null,
+        updatedAt: DateTime? = null
+    ) : this(id, createdAt, updatedAt) { pastPrices.forEach { addPastPrice(it) } }
 
     /**
-     * Adds the given past price to this vehicle
+     * Adds the given past price to this vehcile
      *
      * @param pastPrice The past price to add; if the given past price has the same date as a
      * previous past price, the given past price overwrites the old past price
@@ -75,7 +77,7 @@ class Vehicle(
      */
     fun lacksDates(): Boolean = pastPrices.isEmpty()
 
-    override fun buildJSON(): JSONObject {
+    override fun toJson(): JSONObject {
         TODO("Not yet implemented")
     }
 }
