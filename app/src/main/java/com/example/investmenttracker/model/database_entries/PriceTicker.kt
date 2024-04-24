@@ -1,17 +1,12 @@
-package com.example.investmenttracker.model
+package com.example.investmenttracker.model.database_entries
+
+import com.example.investmenttracker.model.DatabaseEntry
+import com.example.investmenttracker.model.DateTime
 
 /**
  * Holds a monetary value, in USD, that changes as time passes
  */
-interface MonetarilyVariable {
-    /**
-     * @param dateTime The date and time to get the price at
-     * @return The price of this, in USD, at the given dateTime if the given dateTime is contained;
-     * otherwise false
-     * @throws IllegalArgumentException If this does not contain the given dateTime
-     */
-    fun getPriceAt(dateTime: DateTime): Float
-
+abstract class PriceTicker(table: String, id: Int? = null) : DatabaseEntry(table, id) {
     /**
      * @param earlierDateTime The earlier of the two date times
      * @param laterDateTime The later of the two date times
@@ -20,6 +15,7 @@ interface MonetarilyVariable {
      * given laterDateTime
      */
     fun getPriceDifference(earlierDateTime: DateTime, laterDateTime: DateTime): Float
+        = getPriceAt(laterDateTime) - getPriceAt(earlierDateTime)
 
     /**
      * @param earlierDateTime The earlier of the two date times
@@ -29,10 +25,19 @@ interface MonetarilyVariable {
      * given laterDateTime
      */
     fun getRateOfReturn(earlierDateTime: DateTime, laterDateTime: DateTime): Float
+        = getPriceDifference(earlierDateTime, laterDateTime) / getPriceAt(earlierDateTime)
+
+    /**
+     * @param dateTime The date and time to get the price at
+     * @return The price of this, in USD, at the given dateTime if the given dateTime is contained;
+     * otherwise false
+     * @throws IllegalArgumentException If this does not contain the given dateTime
+     */
+    abstract fun getPriceAt(dateTime: DateTime): Float
 
     /**
      * @param dateTime The date time to check for
      * @return True if this has a record of the given date time; otherwise false
      */
-    fun containsDate(dateTime: DateTime): Boolean
+    abstract fun containsDate(dateTime: DateTime): Boolean
 }

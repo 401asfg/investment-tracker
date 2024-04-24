@@ -1,5 +1,7 @@
 package com.example.investmenttracker.model
 
+import org.json.JSONObject
+
 /**
  * A month of a year
  */
@@ -36,3 +38,17 @@ data class DateTime(
     val hour: Int? = null,
     val minute: Int? = null
 )
+
+/**
+ * @return A json representation of this date time
+ */
+fun DateTime.toJson(): JSONObject {
+    val json = JSONObject()
+    json.put("year", year)
+    json.put("month", month)
+    json.put("date", date)
+    json.put("hour", hour)
+    json.put("minute", minute)
+
+    return json
+}
