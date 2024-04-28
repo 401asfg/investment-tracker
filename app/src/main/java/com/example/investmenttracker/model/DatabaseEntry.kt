@@ -8,7 +8,7 @@ import org.json.JSONObject
  * @param table The name of the table to save this entry to
  * @param id The id of the row in which to save this entry
  */
-abstract class DatabaseEntry(private val table: String, private val id: Int?) {
+abstract class DatabaseEntry(private val table: String, val id: Int?) {
     /**
      * @return A json object containing this class' relevant properties
      */

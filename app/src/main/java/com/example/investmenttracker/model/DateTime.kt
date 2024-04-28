@@ -3,6 +3,17 @@ package com.example.investmenttracker.model
 import org.json.JSONObject
 
 /**
+ * A smallest granularity to which a given period of time is measured
+ */
+enum class TimeGranularity {
+    YEAR,
+    MONTH,
+    DATE,
+    HOUR,
+    MINUTE
+}
+
+/**
  * A month of a year
  */
 enum class Month {

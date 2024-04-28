@@ -17,9 +17,9 @@ import org.json.JSONObject
  * the given principal is not greater than zero
  */
 class Investment(
-    val dateTime: DateTime,
-    val principal: Float,
-    val vehicle: Vehicle,
+    private val dateTime: DateTime,
+    private val principal: Float,
+    private val vehicle: Vehicle,
     id: Int? = null
 ) : PriceTicker(INVESTMENT_TABLE, id) {
     init {

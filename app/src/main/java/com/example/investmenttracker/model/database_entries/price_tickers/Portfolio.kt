@@ -14,8 +14,8 @@ import org.json.JSONObject
  * @param id The id of the row in which to save this entry
  */
 class Portfolio(
-    val usdToBaseCurrencyRate: Vehicle,
-    val investments: Set<Investment>,
+    private val usdToBaseCurrencyRate: Vehicle,
+    private val investments: Set<Investment>,
     id: Int? = null
 ) : PriceTicker(PORTFOLIO_TABLE, id) {
     override fun getPriceAt(dateTime: DateTime): Float {
