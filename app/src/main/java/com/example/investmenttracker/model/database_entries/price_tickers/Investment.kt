@@ -1,10 +1,12 @@
 package com.example.investmenttracker.model.database_entries.price_tickers
 
-import com.example.investmenttracker.data.INVESTMENT_TABLE
+import com.example.investmenttracker.model.Database
 import com.example.investmenttracker.model.DateTime
 import com.example.investmenttracker.model.database_entries.PriceTicker
 import com.example.investmenttracker.model.toJson
 import org.json.JSONObject
+
+// TODO: write tests
 
 /**
  * A single investment into a vehicle
@@ -21,7 +23,7 @@ class Investment(
     private val principal: Float,
     private val vehicle: Vehicle,
     id: Int? = null
-) : PriceTicker(INVESTMENT_TABLE, id) {
+) : PriceTicker(Database.INVESTMENT_TABLE, id) {
     init {
         if (!vehicle.containsDate(dateTime)) throw IllegalArgumentException(
             "Vehicle does not contain a record of its price at the time this investment was made"

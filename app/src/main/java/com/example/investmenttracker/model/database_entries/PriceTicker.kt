@@ -3,6 +3,8 @@ package com.example.investmenttracker.model.database_entries
 import com.example.investmenttracker.model.DatabaseEntry
 import com.example.investmenttracker.model.DateTime
 
+// TODO: write tests
+
 /**
  * Holds a monetary value, in USD, that changes as time passes
  */

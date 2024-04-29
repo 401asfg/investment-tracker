@@ -1,10 +1,12 @@
 package com.example.investmenttracker.model.database_entries.price_tickers
 
-import com.example.investmenttracker.data.PORTFOLIO_TABLE
+import com.example.investmenttracker.model.Database
 import com.example.investmenttracker.model.DateTime
 import com.example.investmenttracker.model.database_entries.PriceTicker
 import org.json.JSONArray
 import org.json.JSONObject
+
+// TODO: write tests
 
 /**
  * A portfolio of investments
@@ -17,7 +19,7 @@ class Portfolio(
     private val usdToBaseCurrencyRate: Vehicle,
     private val investments: Set<Investment>,
     id: Int? = null
-) : PriceTicker(PORTFOLIO_TABLE, id) {
+) : PriceTicker(Database.PORTFOLIO_TABLE, id) {
     override fun getPriceAt(dateTime: DateTime): Float {
         val usdToBaseCurrencyRateAtDateTime = usdToBaseCurrencyRate.getPriceAt(dateTime)
 

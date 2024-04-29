@@ -1,9 +1,5 @@
 package com.example.investmenttracker.model
 
-import com.example.investmenttracker.data.INVESTMENT_TABLE
-import com.example.investmenttracker.data.PAST_PRICE_TABLE
-import com.example.investmenttracker.data.PORTFOLIO_TABLE
-import com.example.investmenttracker.data.VEHICLE_TABLE
 import com.example.investmenttracker.model.database_entries.price_tickers.Investment
 import com.example.investmenttracker.model.database_entries.price_tickers.Portfolio
 import com.example.investmenttracker.model.database_entries.price_tickers.Vehicle
@@ -11,13 +7,20 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 
+// TODO: write tests
+
 /**
  * A database which can have entries saved to it and loaded from it
  *
- * @param client The client used to remotely communicate with the database server
+ * @param client A client that can send messages to the server that holds the actual database
  */
 class Database(private val client: Client) {
     companion object {
+        const val PAST_PRICE_TABLE = "past_prices"
+        const val VEHICLE_TABLE = "vehicles"
+        const val INVESTMENT_TABLE = "investments"
+        const val PORTFOLIO_TABLE = "portfolios"
+
         /**
          * @param json The json that describes the portfolio to build
          * @return A portfolio, with all its values obtained from the given json
@@ -139,35 +142,34 @@ class Database(private val client: Client) {
     }
 
     /**
-     * TODO: write documentation
+     * Loads all past prices that fall within the bounds of these parameters
      *
-     * @param vehicle
-     * @param granularity
-     * @param earliestDate
-     * @param latestDate
-     * @return
-     * @throws IOException
+     * @param vehicleId The id of the vehicle all past prices must belong to
+     * @param granularity No past price produced can have a date and time that is a fraction of
+     * this granularity (i.e. if granularity is a date, all past prices produced must be at the end
+     * of the day or have a null date field)
+     * @param earliestDateTime The earliest date and time that any past price can be from
+     * @param latestDateTime The latest date and time that any past price can be from
+     * @return Produces all past prices that have the given vehicleId, come after or at the give
+     * earliestDateTime, before or at the given latestDateTime, and are not fractions of the given
+     * granularity
+     * @throws IOException If the given id does not correspond to any vehicle in the database
      */
     fun loadPastPrices(
-        vehicle: Vehicle,
+        vehicleId: Int,
         granularity: TimeGranularity,
-        earliestDate: DateTime,
-        latestDate: DateTime
+        earliestDateTime: DateTime,
+        latestDateTime: DateTime
     ): Set<PastPrice> {
-        val json = clientGet(
-            PAST_PRICE_TABLE,
-            vehicle.id as Int,
+        val json = clientGetPastPrices(
+            vehicleId,
             granularity,
-            earliestDate,
-            latestDate
+            earliestDateTime,
+            latestDateTime
         )
 
         val pastPrices: MutableSet<PastPrice> = mutableSetOf()
-
-        for (i in 0..json.length()) {
-            pastPrices.add(buildPastPrice(json[i] as JSONObject))
-        }
-
+        for (i in 0..json.length()) { pastPrices.add(buildPastPrice(json[i] as JSONObject)) }
         return pastPrices
     }
 
@@ -184,23 +186,33 @@ class Database(private val client: Client) {
         return client.get(params)
     }
 
-
     /**
-     * TODO: write documentation
+     * Gets a response from the client containing all past prices that fall within the bounds of
+     * these parameters
+     *
+     * @param vehicleId The id of the vehicle all past prices must belong to
+     * @param granularity No past price produced can have a date and time that is a fraction of
+     * this granularity (i.e. if granularity is a date, all past prices produced must be at the end
+     * of the day or have a null date field)
+     * @param earliestDateTime The earliest date and time that any past price can be from
+     * @param latestDateTime The latest date and time that any past price can be from
+     * @return Produces all past prices that have the given vehicleId, come after or at the give
+     * earliestDateTime, before or at the given latestDateTime, and are not fractions of the given
+     * granularity
+     * @throws IOException If the client fails to send this request
      */
-    private fun clientGet(
-        table: String,
-        id: Int,
+    private fun clientGetPastPrices(
+        vehicleId: Int,
         granularity: TimeGranularity,
-        earliestDate: DateTime,
-        latestDate: DateTime
+        earliestDateTime: DateTime,
+        latestDateTime: DateTime
     ): JSONArray {
         val params = mapOf(
-            "table" to table,
-            "id" to id.toString(),
+            "table" to PAST_PRICE_TABLE,
+            "id" to vehicleId.toString(),
             "granularity" to granularity.toString(),
-            "earliest_date" to earliestDate.toJson().toString(),
-            "latest_date" to latestDate.toJson().toString()
+            "earliest_date" to earliestDateTime.toJson().toString(),
+            "latest_date" to latestDateTime.toJson().toString()
         )
 
         return client.get(params).get("past_prices") as JSONArray

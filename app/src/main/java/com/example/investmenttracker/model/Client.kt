@@ -7,13 +7,15 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
 
-/**
- * A client for communicating with the server
- */
-class Client {
-    companion object {
-        private const val SERVER_URL = ""
+// TODO: write tests
 
+/**
+ * A client for communicating with a server
+ *
+ * @param serverUrl The url of the server
+ */
+class Client(val serverUrl: String) {
+    companion object {
         /**
          * @param json The json to convert to a request body
          * @return A request body
@@ -33,7 +35,7 @@ class Client {
      */
     fun post(json: JSONObject): JSONObject {
         val request = Request.Builder()
-            .url(SERVER_URL)
+            .url(serverUrl)
             .post(toRequestBody(json))
             .build()
 
@@ -50,7 +52,7 @@ class Client {
      */
     fun put(json: JSONObject): JSONObject {
         val request = Request.Builder()
-            .url(SERVER_URL)
+            .url(serverUrl)
             .put(toRequestBody(json))
             .build()
 
@@ -66,11 +68,12 @@ class Client {
      */
     fun get(params: Map<String, String>): JSONObject {
         val paramString = params.entries.fold("") { acc, entry ->
-            "$acc&${entry.key}=${entry.value}"
+            if (acc == "") "${entry.key}=${entry.value}"
+            else "$acc&${entry.key}=${entry.value}"
         }
 
         val request = Request.Builder()
-            .url("$SERVER_URL?$paramString")
+            .url("$serverUrl?$paramString")
             .build()
 
         return send(request)
