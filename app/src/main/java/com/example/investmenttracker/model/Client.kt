@@ -29,13 +29,14 @@ class Client(val serverUrl: String) {
      * Sends a HTTP post request with the given json, that has a null top level id, to the database
      * server
      *
+     * @param table The name of the table to make the http request to
      * @param json The body of the http request
      * @return The body of the response to this request
      * @throws IOException If the server rejected this request
      */
-    fun post(json: JSONObject): JSONObject {
+    fun post(table: String, json: JSONObject): JSONObject {
         val request = Request.Builder()
-            .url(serverUrl)
+            .url("$serverUrl/$table")
             .post(toRequestBody(json))
             .build()
 
@@ -46,13 +47,15 @@ class Client(val serverUrl: String) {
      * Sends a HTTP put request with the given json, that has a non null top level id, to the
      * database server
      *
+     * @param table The name of the table to make the http request to
+     * @param id The id of the table row to make the http request to
      * @param json The body of the http request
      * @return The body of the response to this request
      * @throws IOException If the server rejected this request
      */
-    fun put(json: JSONObject): JSONObject {
+    fun put(table: String, id: Int, json: JSONObject): JSONObject {
         val request = Request.Builder()
-            .url(serverUrl)
+            .url("$serverUrl/$table/$id")
             .put(toRequestBody(json))
             .build()
 
@@ -62,18 +65,45 @@ class Client(val serverUrl: String) {
     /**
      * Sends a HTTP get request with the given params to the database server
      *
+     * @param table The name of the table to make the http request to
+     * @param id The id of the table row to make the http request to
      * @param params The parameters to send in the http request
      * @return The body of the response to this request
      * @throws IOException If the server rejected this request
      */
-    fun get(params: Map<String, String>): JSONObject {
+    fun get(table: String, id: Int? = null, params: Map<String, String> = mapOf()): JSONObject
+        = get(id, table, params)
+
+    /**
+     * Sends a HTTP get request with the given params to the database server
+     *
+     * @param table The name of the table to make the http request to
+     * @param params The parameters to send in the http request
+     * @return The body of the response to this request
+     * @throws IOException If the server rejected this request
+     */
+    fun get(table: String, params: Map<String, String>): JSONObject = get(null, table, params)
+
+    /**
+     * Sends a HTTP get request with the given params to the database server
+     *
+     * @param id The id of the table row to make the http request to
+     * @param params The parameters to send in the http request
+     * @param table The name of the table to make the http request to
+     * @return The body of the response to this request
+     * @throws IOException If the server rejected this request
+     */
+    private fun get(id: Int?, table: String, params: Map<String, String>): JSONObject {
+        val urlToTable = "$serverUrl/$table"
+        val idRoute = if (id !== null) "/$id" else ""
+
         val paramString = params.entries.fold("") { acc, entry ->
-            if (acc == "") "${entry.key}=${entry.value}"
+            if (acc == "") "?${entry.key}=${entry.value}"
             else "$acc&${entry.key}=${entry.value}"
         }
 
         val request = Request.Builder()
-            .url("$serverUrl?$paramString")
+            .url("$urlToTable$idRoute$paramString")
             .build()
 
         return send(request)

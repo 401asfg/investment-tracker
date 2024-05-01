@@ -104,8 +104,8 @@ class Database(private val client: Client) {
      */
     fun save(entry: DatabaseEntry) {
         val json = entry.toJson(true)
-        if (entry.id === null) client.post(json)
-        else client.put(json)
+        if (entry.id === null) client.post(entry.table, json)
+        else client.put(entry.table, entry.id, json)
     }
 
     /**
@@ -115,7 +115,7 @@ class Database(private val client: Client) {
      * @throws IOException If the given id does not correspond to any portfolio in the database
      */
     fun loadPortfolio(id: Int): Portfolio {
-        val json = clientGet(PORTFOLIO_TABLE, id)
+        val json = client.get(PORTFOLIO_TABLE, id)
         return buildPortfolio(json)
     }
 
@@ -126,7 +126,7 @@ class Database(private val client: Client) {
      * @throws IOException If the given id does not correspond to any investment in the database
      */
     fun loadInvestment(id: Int): Investment {
-        val json = clientGet(INVESTMENT_TABLE, id)
+        val json = client.get(INVESTMENT_TABLE, id)
         return buildInvestment(json)
     }
 
@@ -137,7 +137,7 @@ class Database(private val client: Client) {
      * @throws IOException If the given id does not correspond to any vehicle in the database
      */
     fun loadVehicle(id: Int): Vehicle {
-        val json = clientGet(VEHICLE_TABLE, id)
+        val json = client.get(VEHICLE_TABLE, id)
         return buildVehicle(json)
     }
 
@@ -174,19 +174,6 @@ class Database(private val client: Client) {
     }
 
     /**
-     * Gets a response from the client, with a request that contains the given table and id
-     *
-     * @param table The table to send in the request
-     * @param id The id to send in the request
-     * @return The body of the response to this request
-     * @throws IOException If the client fails to send this request
-     */
-    private fun clientGet(table: String, id: Int): JSONObject {
-        val params = mapOf("table" to table, "id" to id.toString())
-        return client.get(params)
-    }
-
-    /**
      * Gets a response from the client containing all past prices that fall within the bounds of
      * these parameters
      *
@@ -208,13 +195,12 @@ class Database(private val client: Client) {
         latestDateTime: DateTime
     ): JSONArray {
         val params = mapOf(
-            "table" to PAST_PRICE_TABLE,
-            "id" to vehicleId.toString(),
             "granularity" to granularity.toString(),
             "earliest_date" to earliestDateTime.toJson().toString(),
             "latest_date" to latestDateTime.toJson().toString()
         )
 
-        return client.get(params).get("past_prices") as JSONArray
+        return client.get(PAST_PRICE_TABLE, vehicleId, params)
+            .get(PAST_PRICE_TABLE) as JSONArray
     }
 }

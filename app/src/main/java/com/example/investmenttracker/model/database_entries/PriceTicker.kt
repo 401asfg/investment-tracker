@@ -8,9 +8,10 @@ import com.example.investmenttracker.model.DateTime
 /**
  * Holds a monetary value, in USD, that changes as time passes
  *
+ * @param table The name of the table to save this entry to
  * @param id The id of the row in which to save this entry
  */
-abstract class PriceTicker(id: Int? = null) : DatabaseEntry(id) {
+abstract class PriceTicker(table: String, id: Int? = null) : DatabaseEntry(table, id) {
     /**
      * @param earlierDateTime The earlier of the two date times
      * @param laterDateTime The later of the two date times
