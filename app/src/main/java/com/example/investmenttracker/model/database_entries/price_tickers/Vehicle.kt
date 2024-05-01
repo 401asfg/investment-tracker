@@ -1,6 +1,5 @@
 package com.example.investmenttracker.model.database_entries.price_tickers
 
-import com.example.investmenttracker.model.Database
 import com.example.investmenttracker.model.DateTime
 import com.example.investmenttracker.model.PastPrice
 import com.example.investmenttracker.model.database_entries.PriceTicker
@@ -13,7 +12,7 @@ import org.json.JSONObject
  *
  * @param id The id of the row in which to save this entry
  */
-class Vehicle(id: Int? = null) : PriceTicker(Database.VEHICLE_TABLE, id) {
+class Vehicle(id: Int? = null) : PriceTicker(id) {
     private val pastPrices: MutableMap<DateTime, PastPrice> = mutableMapOf()
 
     /**
@@ -54,5 +53,5 @@ class Vehicle(id: Int? = null) : PriceTicker(Database.VEHICLE_TABLE, id) {
      */
     fun lacksDates(): Boolean = pastPrices.isEmpty()
 
-    override fun toJsonOfClassProperties(): JSONObject = JSONObject()
+    override fun toJson(): JSONObject = JSONObject()
 }

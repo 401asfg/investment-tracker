@@ -103,7 +103,7 @@ class Database(private val client: Client) {
      * @throws IOException If the database could not save all or part of the given portfolio
      */
     fun save(entry: DatabaseEntry) {
-        val json = entry.toJson()
+        val json = entry.toJson(true)
         if (entry.id === null) client.post(json)
         else client.put(json)
     }

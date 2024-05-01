@@ -1,6 +1,5 @@
 package com.example.investmenttracker.model.database_entries.price_tickers
 
-import com.example.investmenttracker.model.Database
 import com.example.investmenttracker.model.DateTime
 import com.example.investmenttracker.model.database_entries.PriceTicker
 import com.example.investmenttracker.model.toJson
@@ -23,7 +22,7 @@ class Investment(
     private val principal: Float,
     private val vehicle: Vehicle,
     id: Int? = null
-) : PriceTicker(Database.INVESTMENT_TABLE, id) {
+) : PriceTicker(id) {
     init {
         if (!vehicle.containsDate(dateTime)) throw IllegalArgumentException(
             "Vehicle does not contain a record of its price at the time this investment was made"
@@ -40,7 +39,7 @@ class Investment(
 
     override fun containsDate(dateTime: DateTime): Boolean = vehicle.containsDate(dateTime)
 
-    override fun toJsonOfClassProperties(): JSONObject {
+    override fun toJson(): JSONObject {
         val json = JSONObject()
         json.put("date_time", dateTime.toJson())
         json.put("principal", principal)

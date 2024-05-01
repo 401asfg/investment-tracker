@@ -5,24 +5,23 @@ import org.json.JSONObject
 /**
  * An entry in a database table
  *
- * @param table The name of the table to save this entry to
  * @param id The id of the row in which to save this entry
  */
-abstract class DatabaseEntry(private val table: String, val id: Int?) {
+abstract class DatabaseEntry(val id: Int?) {
     /**
      * @return A json object containing this class' relevant properties
      */
-    protected abstract fun toJsonOfClassProperties(): JSONObject
+    protected abstract fun toJson(): JSONObject
 
     /**
-     * @return A json object containing this class' relevant properties and the database entry
-     * relevant properties
+     * @param omitsTopLevelId True if the produced json should not contain the id of this database
+     * entry, otherwise false
+     * @return A json object containing this class' relevant properties and its database entry id
+     * if omitsTopLevelId is false
      */
-    fun toJson(): JSONObject {
-        val json = toJsonOfClassProperties()
-        json.put("id", id)
-        json.put("table", table)
-
+    fun toJson(omitsTopLevelId: Boolean = false): JSONObject {
+        val json = toJson()
+        if (!omitsTopLevelId) json.put("id", id)
         return json
     }
 }

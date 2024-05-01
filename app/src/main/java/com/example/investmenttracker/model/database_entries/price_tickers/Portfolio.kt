@@ -1,6 +1,5 @@
 package com.example.investmenttracker.model.database_entries.price_tickers
 
-import com.example.investmenttracker.model.Database
 import com.example.investmenttracker.model.DateTime
 import com.example.investmenttracker.model.database_entries.PriceTicker
 import org.json.JSONArray
@@ -19,7 +18,7 @@ class Portfolio(
     private val usdToBaseCurrencyRate: Vehicle,
     private val investments: Set<Investment>,
     id: Int? = null
-) : PriceTicker(Database.PORTFOLIO_TABLE, id) {
+) : PriceTicker(id) {
     override fun getPriceAt(dateTime: DateTime): Float {
         val usdToBaseCurrencyRateAtDateTime = usdToBaseCurrencyRate.getPriceAt(dateTime)
 
@@ -34,7 +33,7 @@ class Portfolio(
     override fun containsDate(dateTime: DateTime): Boolean
         = investments.any { it.containsDate(dateTime) }
 
-    override fun toJsonOfClassProperties(): JSONObject {
+    override fun toJson(): JSONObject {
         val json = JSONObject()
         json.put("usd_to_base_currency_rate", usdToBaseCurrencyRate.toJson())
 
