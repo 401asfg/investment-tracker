@@ -11,9 +11,15 @@ import org.json.JSONObject
 /**
  * A vehicle that can be invested in
  *
+ * @param symbol The symbol of the vehicle
+ * @param name The name of the vehicle
  * @param id The id of the row in which to save this entry
  */
-class Vehicle(id: Int? = null) : PriceTicker(Database.VEHICLE_TABLE, id) {
+class Vehicle(
+    val symbol: String,
+    val name: String,
+    id: Int? = null
+) : PriceTicker(Database.VEHICLE_TABLE, id) {
     private val pastPrices: MutableMap<DateTime, PastPrice> = mutableMapOf()
 
     /**
@@ -54,5 +60,11 @@ class Vehicle(id: Int? = null) : PriceTicker(Database.VEHICLE_TABLE, id) {
      */
     fun lacksDates(): Boolean = pastPrices.isEmpty()
 
-    override fun toJson(): JSONObject = JSONObject()
+    override fun toJson(): JSONObject {
+        val json = JSONObject()
+        json.put("symbol", symbol)
+        json.put("name", name)
+
+        return json
+    }
 }
