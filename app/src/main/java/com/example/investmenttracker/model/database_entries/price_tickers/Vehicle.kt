@@ -25,11 +25,18 @@ class Vehicle(
     /**
      * A vehicle that can be invested in
      *
+     * @param symbol The symbol of the vehicle
+     * @param name The name of the vehicle
      * @param pastPrices The prices of this vehicle on specific dates; if multiple past prices have
      * same date, only the past price with the largest index will be kept
      * @param id The id of the row in which to save this entry
      */
-    constructor(pastPrices: Set<PastPrice>, id: Int? = null) : this(id) {
+    constructor(
+        symbol: String,
+        name: String,
+        pastPrices: Set<PastPrice>,
+        id: Int? = null
+    ) : this(symbol, name, id) {
         pastPrices.forEach { addPastPrice(it) }
     }
 

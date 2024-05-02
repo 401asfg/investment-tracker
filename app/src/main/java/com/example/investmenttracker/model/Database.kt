@@ -35,6 +35,8 @@ class Database(private val client: Client) {
             return Portfolio(usdToBaseCurrencyRate, investments, id)
         }
 
+        // FIXME: make generic method for building sets
+
         /**
          * @param json The json that describes the investments to build
          * @return A set of investments, with all of their values obtained from the given json
@@ -43,7 +45,8 @@ class Database(private val client: Client) {
             val investments = mutableSetOf<Investment>()
 
             for (i in 0..json.length()) {
-                investments.add(buildInvestment(json[i] as JSONObject))
+                val investment = buildInvestment(json[i] as JSONObject)
+                investments.add(investment)
             }
 
             return investments
@@ -62,10 +65,34 @@ class Database(private val client: Client) {
         }
 
         /**
+         * @param json The json that describes the vehicles to build
+         * @return A set of vehicles, with all of their values obtained from the given json
+         */
+        private fun buildVehicles(json: JSONArray): Set<Vehicle> {
+            val vehicles = mutableSetOf<Vehicle>()
+
+            for (i in 0..json.length()) {
+                val vehicle = buildVehicle(json[i] as JSONObject)
+                vehicles.add(vehicle)
+            }
+
+            return vehicles
+        }
+
+        /**
          * @param json The json that describes the vehicle to build
          * @return A vehicle, with all of its values obtained from the given json
          */
-        private fun buildVehicle(json: JSONObject): Vehicle = Vehicle(json.get("id") as Int)
+        private fun buildVehicle(json: JSONObject): Vehicle {
+            val symbol = json.get("symbol") as String
+            val name = json.get("name") as String
+            val id = json.get("id") as Int
+
+            val pastPricesJson = json.get(PAST_PRICE_TABLE) as JSONArray
+            val pastPrices = buildPastPrices(pastPricesJson)
+
+            return Vehicle(symbol, name, pastPrices, id)
+        }
 
         /**
          * @param json The json that describes the date time to build
@@ -86,12 +113,29 @@ class Database(private val client: Client) {
         }
 
         /**
+         * @param json The json that describes the past prices to build
+         * @return A set of past prices, with all of their values obtained from the given json
+         */
+        private fun buildPastPrices(json: JSONArray): Set<PastPrice> {
+            val pastPrices = mutableSetOf<PastPrice>()
+
+            for (i in 0..json.length()) {
+                val pastPrice = buildPastPrice(json[i] as JSONObject)
+                pastPrices.add(pastPrice)
+            }
+
+            return pastPrices
+        }
+
+        /**
          * @param json The json that describes the past price to build
          * @return A past price, with all of its values obtained from the given json
          */
         private fun buildPastPrice(json: JSONObject): PastPrice {
-            val dateTime = json.get("date_time") as DateTime
+            val dateTimeJson = json.get("date_time") as JSONObject
+            val dateTime = buildDateTime(dateTimeJson)
             val price = json.get("price") as Float
+
             return PastPrice(dateTime, price)
         }
     }
@@ -112,7 +156,8 @@ class Database(private val client: Client) {
      * Loads a portfolio with the given id from the database
      *
      * @param id The id to identify the portfolio with in the database
-     * @throws IOException If the given id does not correspond to any portfolio in the database
+     * @throws IOException If the given id does not correspond to any portfolio in the database, or
+     * the server could not be reached
      */
     fun loadPortfolio(id: Int): Portfolio {
         val json = client.get(PORTFOLIO_TABLE, id)
@@ -123,7 +168,8 @@ class Database(private val client: Client) {
      * Loads an investment with the given id from the database
      *
      * @param id The id to identify the investment with in the database
-     * @throws IOException If the given id does not correspond to any investment in the database
+     * @throws IOException If the given id does not correspond to any investment in the database,
+     * or the server could not be reached
      */
     fun loadInvestment(id: Int): Investment {
         val json = client.get(INVESTMENT_TABLE, id)
@@ -134,11 +180,27 @@ class Database(private val client: Client) {
      * Loads a vehicle with the given id from the database
      *
      * @param id The id to identify the vehicle with in the database
-     * @throws IOException If the given id does not correspond to any vehicle in the database
+     * @throws IOException If the given id does not correspond to any vehicle in the database, or
+     * the server could not be reached
      */
     fun loadVehicle(id: Int): Vehicle {
         val json = client.get(VEHICLE_TABLE, id)
         return buildVehicle(json)
+    }
+
+    /**
+     * Loads vehicles with symbols or names that contain the given query
+     *
+     * @param query A series of characters to search for vehicles by
+     * @return Vehicles that each have a name or symbol that contains the query within it
+     * @throws IOException If the server could not be reached
+     */
+    fun loadVehicles(query: String): Set<Vehicle> {
+        val params = mapOf("q" to query)
+        val json = client.get(VEHICLE_TABLE, params)
+            .get(VEHICLE_TABLE) as JSONArray
+
+        return buildVehicles(json)
     }
 
     /**
