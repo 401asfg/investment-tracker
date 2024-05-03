@@ -36,9 +36,15 @@ class Vehicle(
         name: String,
         pastPrices: Set<PastPrice>,
         id: Int? = null
-    ) : this(symbol, name, id) {
-        pastPrices.forEach { addPastPrice(it) }
-    }
+    ) : this(symbol, name, id) { addPastPrices(pastPrices) }
+
+    /**
+     * Adds the given past prices to this vehicle
+     *
+     * @param pastPrices The past prices to add; if any of the given past prices has the same date
+     * as a previous past price, the given past price overwrites the old past price
+     */
+    fun addPastPrices(pastPrices: Set<PastPrice>) { pastPrices.forEach { addPastPrice(it) } }
 
     /**
      * Adds the given past price to this vehicle
@@ -58,12 +64,12 @@ class Vehicle(
     override fun containsDate(dateTime: DateTime): Boolean = pastPrices.containsKey(dateTime)
 
     /**
-     * @return The number of distinct date times recorded in this
+     * @return The number of distinct date times recorded in this vehicle
      */
     fun numDates(): Int = pastPrices.size
 
     /**
-     * @return True if this has no recorded date times; otherwise false
+     * @return True if this vehicle has no recorded date times; otherwise false
      */
     fun lacksDates(): Boolean = pastPrices.isEmpty()
 

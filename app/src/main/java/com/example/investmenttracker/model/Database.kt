@@ -88,10 +88,9 @@ class Database(private val client: Client) {
             val name = json.get("name") as String
             val id = json.get("id") as Int
 
-            val pastPricesJson = json.get(PAST_PRICE_TABLE) as JSONArray
-            val pastPrices = buildPastPrices(pastPricesJson)
+            // FIXME: should this load past prices?
 
-            return Vehicle(symbol, name, pastPrices, id)
+            return Vehicle(symbol, name, id)
         }
 
         /**
@@ -189,13 +188,13 @@ class Database(private val client: Client) {
     }
 
     /**
-     * Loads vehicles with symbols or names that contain the given query
+     * Searches for vehicles with symbols or names that contain the given query
      *
      * @param query A series of characters to search for vehicles by
      * @return Vehicles that each have a name or symbol that contains the query within it
      * @throws IOException If the server could not be reached
      */
-    fun loadVehicles(query: String): Set<Vehicle> {
+    fun findVehicles(query: String): Set<Vehicle> {
         val params = mapOf("q" to query)
         val json = client.get(VEHICLE_TABLE, params)
             .get(VEHICLE_TABLE) as JSONArray
@@ -203,8 +202,10 @@ class Database(private val client: Client) {
         return buildVehicles(json)
     }
 
+    // FIXME: should this be findVehicle?
+
     /**
-     * Loads all past prices that fall within the bounds of these parameters
+     * Searches for all past prices that fall within the bounds of these parameters
      *
      * @param vehicleId The id of the vehicle all past prices must belong to
      * @param granularity No past price produced can have a date and time that is a fraction of
@@ -217,7 +218,7 @@ class Database(private val client: Client) {
      * granularity
      * @throws IOException If the given id does not correspond to any vehicle in the database
      */
-    fun loadPastPrices(
+    fun findPastPrices(
         vehicleId: Int,
         granularity: TimeGranularity,
         earliestDateTime: DateTime,
@@ -257,12 +258,13 @@ class Database(private val client: Client) {
         latestDateTime: DateTime
     ): JSONArray {
         val params = mapOf(
+            "vehicleId" to vehicleId.toString(),
             "granularity" to granularity.toString(),
             "earliest_date" to earliestDateTime.toJson().toString(),
             "latest_date" to latestDateTime.toJson().toString()
         )
 
-        return client.get(PAST_PRICE_TABLE, vehicleId, params)
+        return client.get(PAST_PRICE_TABLE, params)
             .get(PAST_PRICE_TABLE) as JSONArray
     }
 }

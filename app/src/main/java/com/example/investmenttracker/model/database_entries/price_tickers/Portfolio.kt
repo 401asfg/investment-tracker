@@ -17,9 +17,22 @@ import org.json.JSONObject
  */
 class Portfolio(
     private val usdToBaseCurrencyRate: Vehicle,
-    private val investments: Set<Investment>,
+    investments: Set<Investment>,
     id: Int? = null
 ) : PriceTicker(Database.PORTFOLIO_TABLE, id) {
+    private val investments: MutableSet<Investment> = mutableSetOf()
+
+    init { investments.forEach { addInvestment(it) } }
+
+    // FIXME: should this be abstracted into parent interface for vehicle and portfolio?
+
+    /**
+     * Adds the given investment to this portfolio
+     *
+     * @param investment The investment to add
+     */
+    fun addInvestment(investment: Investment) { investments.add(investment) }
+
     override fun getPriceAt(dateTime: DateTime): Float {
         val usdToBaseCurrencyRateAtDateTime = usdToBaseCurrencyRate.getPriceAt(dateTime)
 
@@ -33,6 +46,16 @@ class Portfolio(
 
     override fun containsDate(dateTime: DateTime): Boolean
         = investments.any { it.containsDate(dateTime) }
+
+    /**
+     * @return The number of investments in this portfolio
+     */
+    fun numInvestments(): Int = investments.size
+
+    /**
+     * @return True if this portfolio has no investments; otherwise false
+     */
+    fun lacksInvestments(): Boolean = investments.isEmpty()
 
     override fun toJson(): JSONObject {
         val json = JSONObject()
