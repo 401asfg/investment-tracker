@@ -2,7 +2,6 @@ package com.example.investmenttracker
 
 import com.example.investmenttracker.model.DateTime
 import com.example.investmenttracker.model.Month
-import com.example.investmenttracker.model.toJson
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -17,7 +16,7 @@ class DateTimeTest {
                 {
                     "year": 2024,
                     "month": JANUARY,
-                    "date": 8,
+                    "day": 8,
                     "hour": 9,
                     "minute": 7
                 }
@@ -36,7 +35,7 @@ class DateTimeTest {
                 {
                     "year": 9,
                     "month": DECEMBER,
-                    "date": 8,
+                    "day": 8,
                     "hour": 9
                 }
                 """.trimIndent()
@@ -54,7 +53,7 @@ class DateTimeTest {
                 {
                     "year": 2024,
                     "month": JANUARY,
-                    "date": 8
+                    "day": 8
                 }
                 """.trimIndent()
             ).toString(),

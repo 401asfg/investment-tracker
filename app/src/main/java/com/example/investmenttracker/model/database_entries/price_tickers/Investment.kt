@@ -3,7 +3,6 @@ package com.example.investmenttracker.model.database_entries.price_tickers
 import com.example.investmenttracker.model.Database
 import com.example.investmenttracker.model.DateTime
 import com.example.investmenttracker.model.database_entries.PriceTicker
-import com.example.investmenttracker.model.toJson
 import org.json.JSONObject
 
 // TODO: write tests
