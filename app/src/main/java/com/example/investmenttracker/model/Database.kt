@@ -22,6 +22,22 @@ class Database(private val client: Client) {
         const val PORTFOLIO_TABLE = "portfolios"
 
         /**
+         * @param json The json that describes the T's in the set to build
+         * @param build The function used to build each of the T's in the set
+         * @return A set of T's, with all of their values obtained from the given json
+         */
+        private fun <T> buildSet(json: JSONArray, build: (JSONObject) -> T): Set<T> {
+            val items = mutableSetOf<T>()
+
+            for (i in 0..json.length()) {
+                val item = build(json[i] as JSONObject)
+                items.add(item)
+            }
+
+            return items
+        }
+
+        /**
          * @param json The json that describes the portfolio to build
          * @return A portfolio, with all its values obtained from the given json
          */
@@ -30,26 +46,10 @@ class Database(private val client: Client) {
                 json.get("usd_to_base_currency_rate") as JSONObject
             )
 
-            val investments = buildInvestments(json.get("investments") as JSONArray)
+            val investmentsJson = json.get(INVESTMENT_TABLE) as JSONArray
+            val investments = buildSet(investmentsJson, Database::buildInvestment)
             val id = json.get("id") as Int
             return Portfolio(usdToBaseCurrencyRate, investments, id)
-        }
-
-        // FIXME: make generic method for building sets
-
-        /**
-         * @param json The json that describes the investments to build
-         * @return A set of investments, with all of their values obtained from the given json
-         */
-        private fun buildInvestments(json: JSONArray): Set<Investment> {
-            val investments = mutableSetOf<Investment>()
-
-            for (i in 0..json.length()) {
-                val investment = buildInvestment(json[i] as JSONObject)
-                investments.add(investment)
-            }
-
-            return investments
         }
 
         /**
@@ -62,21 +62,6 @@ class Database(private val client: Client) {
             val vehicle = buildVehicle(json.get("vehicle") as JSONObject)
             val id = json.get("id") as Int
             return Investment(dateTime, principal, vehicle, id)
-        }
-
-        /**
-         * @param json The json that describes the vehicles to build
-         * @return A set of vehicles, with all of their values obtained from the given json
-         */
-        private fun buildVehicles(json: JSONArray): Set<Vehicle> {
-            val vehicles = mutableSetOf<Vehicle>()
-
-            for (i in 0..json.length()) {
-                val vehicle = buildVehicle(json[i] as JSONObject)
-                vehicles.add(vehicle)
-            }
-
-            return vehicles
         }
 
         /**
@@ -109,21 +94,6 @@ class Database(private val client: Client) {
             if (json.has("minute")) minute = json.get("minute") as Int
 
             return DateTime(year, month, date, hour, minute)
-        }
-
-        /**
-         * @param json The json that describes the past prices to build
-         * @return A set of past prices, with all of their values obtained from the given json
-         */
-        private fun buildPastPrices(json: JSONArray): Set<PastPrice> {
-            val pastPrices = mutableSetOf<PastPrice>()
-
-            for (i in 0..json.length()) {
-                val pastPrice = buildPastPrice(json[i] as JSONObject)
-                pastPrices.add(pastPrice)
-            }
-
-            return pastPrices
         }
 
         /**
@@ -194,15 +164,13 @@ class Database(private val client: Client) {
      * @return Vehicles that each have a name or symbol that contains the query within it
      * @throws IOException If the server could not be reached
      */
-    fun findVehicles(query: String): Set<Vehicle> {
+    fun loadVehicles(query: String): Set<Vehicle> {
         val params = mapOf("q" to query)
         val json = client.get(VEHICLE_TABLE, params)
             .get(VEHICLE_TABLE) as JSONArray
 
-        return buildVehicles(json)
+        return buildSet(json, Database::buildVehicle)
     }
-
-    // FIXME: should this be findVehicle?
 
     /**
      * Searches for all past prices that fall within the bounds of these parameters
@@ -218,7 +186,7 @@ class Database(private val client: Client) {
      * granularity
      * @throws IOException If the given id does not correspond to any vehicle in the database
      */
-    fun findPastPrices(
+    fun loadPastPrices(
         vehicleId: Int,
         granularity: TimeGranularity,
         earliestDateTime: DateTime,
@@ -231,9 +199,7 @@ class Database(private val client: Client) {
             latestDateTime
         )
 
-        val pastPrices: MutableSet<PastPrice> = mutableSetOf()
-        for (i in 0..json.length()) { pastPrices.add(buildPastPrice(json[i] as JSONObject)) }
-        return pastPrices
+        return buildSet(json, Database::buildPastPrice)
     }
 
     /**
