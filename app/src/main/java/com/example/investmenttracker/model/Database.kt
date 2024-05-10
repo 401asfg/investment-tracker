@@ -22,7 +22,7 @@ class Database(private val client: Client) {
         const val PORTFOLIO_TABLE = "portfolios"
 
         /**
-         * @param json The json that describes the T's in the set to build
+         * @param json The json that describes the T's to build
          * @param build The function used to build each of the T's in the set
          * @return A set of T's, with all of their values obtained from the given json
          */
