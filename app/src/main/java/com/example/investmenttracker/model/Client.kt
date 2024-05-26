@@ -44,25 +44,6 @@ class Client(val serverUrl: String) {
     }
 
     /**
-     * Sends a HTTP put request with the given json, that has a non null top level id, to the
-     * database server
-     *
-     * @param table The name of the table to make the http request to
-     * @param id The id of the table row to make the http request to
-     * @param json The body of the http request
-     * @return The body of the response to this request
-     * @throws IOException If the server rejected this request
-     */
-    fun put(table: String, id: Int, json: JSONObject): JSONObject {
-        val request = Request.Builder()
-            .url("$serverUrl/$table/$id")
-            .put(toRequestBody(json))
-            .build()
-
-        return send(request)
-    }
-
-    /**
      * Sends a HTTP get request with the given params to the database server
      *
      * @param table The name of the table to make the http request to

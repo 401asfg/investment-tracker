@@ -23,7 +23,6 @@ class Investment(
     private val vehicle: Vehicle,
     override var id: Int? = null
 ) : Writable, PriceTicker() {
-
     init {
         if (!vehicle.containsDate(dateTime)) throw IllegalArgumentException(
             "Vehicle does not contain a record of its price at the time this investment was made"
