@@ -1,9 +1,8 @@
 package com.example.investmenttracker.model.database_entries.price_tickers
 
-import com.example.investmenttracker.model.Database
 import com.example.investmenttracker.model.DateTime
+import com.example.investmenttracker.model.Writable
 import com.example.investmenttracker.model.database_entries.PriceTicker
-import org.json.JSONArray
 import org.json.JSONObject
 
 // TODO: write tests
@@ -12,15 +11,26 @@ import org.json.JSONObject
  * A portfolio of investments
  * 
  * @param usdToBaseCurrencyRate The exchange rate of USD to this portfolio's base currency
- * @param investments The investments made in this portfolio
  * @param id The id of the row in which to save this entry
  */
 class Portfolio(
     private val usdToBaseCurrencyRate: Vehicle,
-    investments: Set<Investment>,
-    id: Int? = null
-) : PriceTicker(Database.PORTFOLIO_TABLE, id) {
+    override var id: Int? = null
+) : Writable, PriceTicker() {
     private val investments: MutableSet<Investment> = mutableSetOf()
+
+    /**
+     * A portfolio of investments
+     *
+     * @param usdToBaseCurrencyRate The exchange rate of USD to this portfolio's base currency
+     * @param investments The investments made in this portfolio
+     * @param id The id of the row in which to save this entry
+     */
+    constructor(
+        usdToBaseCurrencyRate: Vehicle,
+        investments: Set<Investment>,
+        id: Int? = null
+    ) : this(usdToBaseCurrencyRate, id) { investments.forEach { addInvestment(it) } }
 
     init { investments.forEach { addInvestment(it) } }
 
@@ -59,12 +69,7 @@ class Portfolio(
 
     override fun toJson(): JSONObject {
         val json = JSONObject()
-        json.put("usd_to_base_currency_rate", usdToBaseCurrencyRate.toJson())
-
-        val investmentsJsonArray = JSONArray()
-        investments.forEach { investmentsJsonArray.put(it.toJson()) }
-
-        json.put("investments", investmentsJsonArray)
+        json.put("usd_to_base_currency_rate_vehicle_id", usdToBaseCurrencyRate.id)
 
         return json
     }

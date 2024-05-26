@@ -1,17 +1,14 @@
 package com.example.investmenttracker.model.database_entries
 
-import com.example.investmenttracker.model.DatabaseEntry
 import com.example.investmenttracker.model.DateTime
+import com.example.investmenttracker.model.Loadable
 
 // TODO: write tests
 
 /**
  * Holds a monetary value, in USD, that changes as time passes
- *
- * @param table The name of the table to save this entry to
- * @param id The id of the row in which to save this entry
  */
-abstract class PriceTicker(table: String, id: Int? = null) : DatabaseEntry(table, id) {
+abstract class PriceTicker : Loadable {
     /**
      * @param earlierDateTime The earlier of the two date times
      * @param laterDateTime The later of the two date times

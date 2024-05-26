@@ -46,8 +46,11 @@ class Database(private val client: Client) {
                 json.get("usd_to_base_currency_rate") as JSONObject
             )
 
-            val investmentsJson = json.get(INVESTMENT_TABLE) as JSONArray
-            val investments = buildSet(investmentsJson, Database::buildInvestment)
+            val investments = buildSet(
+                json.get(INVESTMENT_TABLE) as JSONArray,
+                Database::buildInvestment
+            )
+
             val id = json.get("id") as Int
             return Portfolio(usdToBaseCurrencyRate, investments, id)
         }
@@ -73,9 +76,23 @@ class Database(private val client: Client) {
             val name = json.get("name") as String
             val id = json.get("id") as Int
 
-            // FIXME: should this load past prices?
+            val pastPrices = buildSet(
+                json.get("past_prices") as JSONArray,
+                Database::buildPastPrice
+            )
 
-            return Vehicle(symbol, name, id)
+            return Vehicle(symbol, name, pastPrices, id)
+        }
+
+        /**
+         * @param json The json that describes the past price to build
+         * @return A past price, with all of its values obtained from the given json
+         */
+        private fun buildPastPrice(json: JSONObject): PastPrice {
+            val dateTime = buildDateTime(json.get("date_time") as JSONObject)
+            val price = json.get("price") as Float
+
+            return PastPrice(dateTime, price)
         }
 
         /**
@@ -95,30 +112,30 @@ class Database(private val client: Client) {
 
             return DateTime(year, month, date, hour, minute)
         }
-
-        /**
-         * @param json The json that describes the past price to build
-         * @return A past price, with all of its values obtained from the given json
-         */
-        private fun buildPastPrice(json: JSONObject): PastPrice {
-            val dateTimeJson = json.get("date_time") as JSONObject
-            val dateTime = buildDateTime(dateTimeJson)
-            val price = json.get("price") as Float
-
-            return PastPrice(dateTime, price)
-        }
     }
 
     /**
-     * Saves the given entry into the database
+     * Saves the given portfolio to the database
      *
-     * @param entry The entry to save to the database
-     * @throws IOException If the database could not save all or part of the given portfolio
+     * @param portfolio The portfolio to save
+     * @throws IOException If the database could not save the given portfolio
      */
-    fun save(entry: DatabaseEntry) {
-        val json = entry.toJson(true)
-        if (entry.id === null) client.post(entry.table, json)
-        else client.put(entry.table, entry.id, json)
+    fun save(portfolio: Portfolio) {
+        val json = portfolio.toJson()
+        client.post(PORTFOLIO_TABLE, json)
+    }
+
+    /**
+     * Saves the given investment to the database
+     *
+     * @param investment The investment to save
+     * @param portfolioId The id of the portfolio that the given investment belongs to
+     * @throws IOException If the database could not save the given investment
+     */
+    fun save(investment: Investment, portfolioId: Int) {
+        val json = investment.toJson()
+        json.put("portfolio_id", portfolioId)
+        client.post(INVESTMENT_TABLE, json)
     }
 
     /**

@@ -1,10 +1,8 @@
 package com.example.investmenttracker.model.database_entries.price_tickers
 
-import com.example.investmenttracker.model.Database
 import com.example.investmenttracker.model.DateTime
 import com.example.investmenttracker.model.PastPrice
 import com.example.investmenttracker.model.database_entries.PriceTicker
-import org.json.JSONObject
 
 // TODO: write tests
 
@@ -13,13 +11,13 @@ import org.json.JSONObject
  *
  * @param symbol The symbol of the vehicle
  * @param name The name of the vehicle
- * @param id The id of the row in which to save this entry
+ * @param id The id of the row in a database table that this vehicle comes from
  */
 class Vehicle(
     val symbol: String,
     val name: String,
-    id: Int? = null
-) : PriceTicker(Database.VEHICLE_TABLE, id) {
+    override var id: Int? = null
+) : PriceTicker() {
     private val pastPrices: MutableMap<DateTime, PastPrice> = mutableMapOf()
 
     /**
@@ -72,12 +70,4 @@ class Vehicle(
      * @return True if this vehicle has no recorded date times; otherwise false
      */
     fun lacksDates(): Boolean = pastPrices.isEmpty()
-
-    override fun toJson(): JSONObject {
-        val json = JSONObject()
-        json.put("symbol", symbol)
-        json.put("name", name)
-
-        return json
-    }
 }

@@ -49,11 +49,8 @@ data class DateTime(
     val day: Int? = null,
     val hour: Int? = null,
     val minute: Int? = null
-) {
-    /**
-     * @return A json representation of this date time
-     */
-    fun toJson(): JSONObject {
+) : Writable {
+    override fun toJson(): JSONObject {
         val json = JSONObject()
         json.put("year", year)
         json.put("month", month)
