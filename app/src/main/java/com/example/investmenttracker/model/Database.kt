@@ -193,11 +193,11 @@ class Database(private val client: Client) {
      * Searches for all past prices that fall within the bounds of these parameters
      *
      * @param vehicleId The id of the vehicle all past prices must belong to
-     * @param granularity No past price produced can have a date and time that is a fraction of
+     * @param timeGranularity No past price produced can have a date and time that is a fraction of
      * this granularity (i.e. if granularity is a date, all past prices produced must be at the end
      * of the day or have a null date field)
-     * @param earliestDateTime The earliest date and time that any past price can be from
-     * @param latestDateTime The latest date and time that any past price can be from
+     * @param from The earliest date and time that any past price can be from
+     * @param to The latest date and time that any past price can be from
      * @return Produces all past prices that have the given vehicleId, come after or at the give
      * earliestDateTime, before or at the given latestDateTime, and are not fractions of the given
      * granularity
@@ -205,17 +205,11 @@ class Database(private val client: Client) {
      */
     fun loadPastPrices(
         vehicleId: Int,
-        granularity: TimeGranularity,
-        earliestDateTime: DateTime,
-        latestDateTime: DateTime
+        timeGranularity: TimeGranularity,
+        from: DateTime,
+        to: DateTime
     ): Set<PastPrice> {
-        val json = clientGetPastPrices(
-            vehicleId,
-            granularity,
-            earliestDateTime,
-            latestDateTime
-        )
-
+        val json = clientGetPastPrices(vehicleId, timeGranularity, from, to)
         return buildSet(json, Database::buildPastPrice)
     }
 
