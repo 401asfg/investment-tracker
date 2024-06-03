@@ -10,11 +10,11 @@ import java.io.IOException
 // TODO: write tests
 
 /**
- * A client for communicating with a server
+ * A client for using HTTP to communicate with a server
  *
  * @param serverUrl The url of the server
  */
-class Client(val serverUrl: String) {
+class HttpClient(val serverUrl: String) : RestfulClient {
     companion object {
         /**
          * @param json The json to convert to a request body
@@ -25,16 +25,7 @@ class Client(val serverUrl: String) {
 
     private val client = OkHttpClient()
 
-    /**
-     * Sends a HTTP post request with the given json, that has a null top level id, to the database
-     * server
-     *
-     * @param table The name of the table to make the http request to
-     * @param json The body of the http request
-     * @return The body of the response to this request
-     * @throws IOException If the server rejected this request
-     */
-    fun post(table: String, json: JSONObject): JSONObject {
+    override fun post(table: String, json: JSONObject): JSONObject {
         val request = Request.Builder()
             .url("$serverUrl/$table")
             .post(toRequestBody(json))
@@ -43,27 +34,11 @@ class Client(val serverUrl: String) {
         return send(request)
     }
 
-    /**
-     * Sends a HTTP get request with the given params to the database server
-     *
-     * @param table The name of the table to make the http request to
-     * @param id The id of the table row to make the http request to
-     * @param params The parameters to send in the http request
-     * @return The body of the response to this request
-     * @throws IOException If the server rejected this request
-     */
-    fun get(table: String, id: Int? = null, params: Map<String, String> = mapOf()): JSONObject
+    override fun get(table: String, id: Int?, params: Map<String, String>): JSONObject
         = get(id, table, params)
 
-    /**
-     * Sends a HTTP get request with the given params to the database server
-     *
-     * @param table The name of the table to make the http request to
-     * @param params The parameters to send in the http request
-     * @return The body of the response to this request
-     * @throws IOException If the server rejected this request
-     */
-    fun get(table: String, params: Map<String, String>): JSONObject = get(null, table, params)
+    override fun get(table: String, params: Map<String, String>): JSONObject
+        = get(null, table, params)
 
     /**
      * Sends a HTTP get request with the given params to the database server

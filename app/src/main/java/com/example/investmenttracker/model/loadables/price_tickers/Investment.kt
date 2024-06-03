@@ -1,11 +1,9 @@
-package com.example.investmenttracker.model.database_entries.price_tickers
+package com.example.investmenttracker.model.loadables.price_tickers
 
 import com.example.investmenttracker.model.DateTime
 import com.example.investmenttracker.model.Writable
-import com.example.investmenttracker.model.database_entries.PriceTicker
+import com.example.investmenttracker.model.loadables.PriceTicker
 import org.json.JSONObject
-
-// TODO: write tests
 
 /**
  * A single investment into a vehicle

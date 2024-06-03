@@ -1,8 +1,8 @@
 package com.example.investmenttracker.model
 
-import com.example.investmenttracker.model.database_entries.price_tickers.Investment
-import com.example.investmenttracker.model.database_entries.price_tickers.Portfolio
-import com.example.investmenttracker.model.database_entries.price_tickers.Vehicle
+import com.example.investmenttracker.model.loadables.price_tickers.Investment
+import com.example.investmenttracker.model.loadables.price_tickers.Portfolio
+import com.example.investmenttracker.model.loadables.price_tickers.Vehicle
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
@@ -12,9 +12,10 @@ import java.io.IOException
 /**
  * A database which can have entries saved to it and loaded from it
  *
- * @param client A client that can send messages to the server that holds the actual database
+ * @param client A restful client that can send messages to the server that holds the actual
+ * database
  */
-class Database(private val client: Client) {
+class Database(private val client: RestfulClient) {
     companion object {
         const val PAST_PRICE_TABLE = "past_prices"
         const val VEHICLE_TABLE = "vehicles"
@@ -182,11 +183,25 @@ class Database(private val client: Client) {
      * @throws IOException If the server could not be reached
      */
     fun loadVehicles(query: String): Set<Vehicle> {
-        val params = mapOf("q" to query)
+        val params = mapOf("query" to query)
         val json = client.get(VEHICLE_TABLE, params)
             .get(VEHICLE_TABLE) as JSONArray
 
         return buildSet(json, Database::buildVehicle)
+    }
+
+    /**
+     * Produces the vehicle with the given symbol
+     *
+     * @param symbol The symbol of the vehicle to obtain
+     * @return The vehicle in the database with the given symbol if it can be found in the
+     * database; otherwise, null
+     * @throws IOException If the server could not be reached
+     */
+    fun loadVehicle(symbol: String): Vehicle? {
+        val params = mapOf("symbol" to symbol)
+        val json = client.get(VEHICLE_TABLE, params)
+        return buildVehicle(json)
     }
 
     /**

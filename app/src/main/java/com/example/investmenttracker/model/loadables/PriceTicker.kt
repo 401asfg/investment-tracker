@@ -1,38 +1,35 @@
-package com.example.investmenttracker.model.database_entries
+package com.example.investmenttracker.model.loadables
 
 import com.example.investmenttracker.model.DateTime
 import com.example.investmenttracker.model.Loadable
-
-// TODO: write tests
 
 /**
  * Holds a monetary value, in USD, that changes as time passes
  */
 abstract class PriceTicker : Loadable {
     /**
-     * @param earlierDateTime The earlier of the two date times
-     * @param laterDateTime The later of the two date times
+     * @param from The earlier of the two date times
+     * @param to The later of the two date times
      * @return The difference in price between the later date time and the earlier date time
      * @throws IllegalArgumentException If this does not contain the given earlierDateTime or the
      * given laterDateTime
      */
-    fun getPriceDifference(earlierDateTime: DateTime, laterDateTime: DateTime): Float
-        = getPriceAt(laterDateTime) - getPriceAt(earlierDateTime)
+    fun getPriceDifference(from: DateTime, to: DateTime): Float
+        = getPriceAt(to) - getPriceAt(from)
 
     /**
-     * @param earlierDateTime The earlier of the two date times
-     * @param laterDateTime The later of the two date times
+     * @param from The earlier of the two date times
+     * @param to The later of the two date times
      * @return The rate of return between the later date time and the earlier date time
      * @throws IllegalArgumentException If this does not contain the given earlierDateTime or the
      * given laterDateTime
      */
-    fun getRateOfReturn(earlierDateTime: DateTime, laterDateTime: DateTime): Float
-        = getPriceDifference(earlierDateTime, laterDateTime) / getPriceAt(earlierDateTime)
+    fun getRateOfReturn(from: DateTime, to: DateTime): Float
+        = getPriceDifference(from, to) / getPriceAt(from)
 
     /**
      * @param dateTime The date and time to get the price at
-     * @return The price of this, in USD, at the given dateTime if the given dateTime is contained;
-     * otherwise false
+     * @return The price of this, in USD, at the given dateTime if the given dateTime is contained
      * @throws IllegalArgumentException If this does not contain the given dateTime
      */
     abstract fun getPriceAt(dateTime: DateTime): Float
