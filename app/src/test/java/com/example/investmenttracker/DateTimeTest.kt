@@ -8,6 +8,26 @@ import org.junit.Test
 
 class DateTimeTest {
     @Test
+    fun testIsEarlierThanNoNullFields() {
+        // TODO: write
+    }
+
+    @Test
+    fun testIsEarlierThanNullThisFields() {
+        // TODO: write
+    }
+
+    @Test
+    fun testIsEarlierThanNullThatFields() {
+        // TODO: write
+    }
+
+    @Test
+    fun testIsEarlierThanAllNullFields() {
+        // TODO: write
+    }
+
+    @Test
     fun testToJsonNoNull() {
         val dateTime = DateTime(2024, Month.JANUARY, 8, 9, 7)
         assertEquals(

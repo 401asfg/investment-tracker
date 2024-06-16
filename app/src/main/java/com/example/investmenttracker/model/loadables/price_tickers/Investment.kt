@@ -16,21 +16,29 @@ import org.json.JSONObject
  * the given principal is not greater than zero
  */
 class Investment(
-    private val dateTime: DateTime,
-    private val principal: Float,
-    private val vehicle: Vehicle,
+    val dateTime: DateTime,
+    val principal: Float,
+    val vehicle: Vehicle,
     override var id: Int? = null
 ) : Writable, PriceTicker() {
     init {
-        if (!vehicle.containsDate(dateTime)) throw IllegalArgumentException(
+        if (!containsDate(dateTime)) throw IllegalArgumentException(
             "Vehicle does not contain a record of its price at the time this investment was made"
         )
 
-        if (principal <= 0)
+        if (principal <= 0f)
             throw IllegalArgumentException("Investment principal is not greater than zero")
     }
 
+    /**
+     * @param dateTime The date and time to get the price at
+     * @return The price of this, in USD, at the given dateTime if the given dateTime is contained;
+     * 0 USD if the given dateTime is earlier than this investment's dateTime
+     * @throws IllegalArgumentException If the given dateTime is at the same time as or later than
+     * the given dateTime, and this does not contain the given dateTime
+     */
     override fun getPriceAt(dateTime: DateTime): Float {
+        if (dateTime.isEarlierThan(this.dateTime)) return 0f
         val vehicleRateOfReturn = vehicle.getRateOfReturn(this.dateTime, dateTime)
         return vehicleRateOfReturn * principal + principal
     }

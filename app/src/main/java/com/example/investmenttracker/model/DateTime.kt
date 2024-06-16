@@ -50,6 +50,35 @@ data class DateTime(
     val hour: Int? = null,
     val minute: Int? = null
 ) : Writable {
+    // TODO: test isEarlierThan
+
+    /**
+     * @param that The date time to compare this to
+     * @return True if this is earlier than that; otherwise, false; if either date time has a null
+     * field, that field is not compared
+     */
+    fun isEarlierThan(that: DateTime): Boolean {
+        // FIXME: refactor to use the date time's distance in minutes from 0-1-1 00:00 for comparison
+        if (this.year < that.year) return true
+        if (this.year > that.year) return false
+
+        if (toNum(this.month) < toNum(that.month)) return true
+        if (toNum(this.month) > toNum(that.month)) return false
+
+        if (this.day === null || that.day === null) return false
+        if (this.day < that.day) return true
+        if (this.day > that.day) return false
+
+        if (this.hour === null || that.hour === null) return false
+        if (this.hour < that.hour) return true
+        if (this.hour > that.hour) return false
+
+        if (this.minute === null || that.minute === null) return false
+        if (this.minute < that.minute) return true
+
+        return false
+    }
+
     override fun toJson(): JSONObject {
         val json = JSONObject()
         json.put("year", year)
@@ -59,5 +88,26 @@ data class DateTime(
         json.put("minute", minute)
 
         return json
+    }
+
+    /**
+     * @param month The month to convert into its corresponding number
+     * @return The number representation of the month
+     */
+    private fun toNum(month: Month): Int {
+        return when (month) {
+            Month.JANUARY -> 1
+            Month.FEBRUARY -> 2
+            Month.MARCH -> 3
+            Month.APRIL -> 4
+            Month.MAY -> 5
+            Month.JUNE -> 6
+            Month.JULY -> 7
+            Month.AUGUST -> 8
+            Month.SEPTEMBER -> 9
+            Month.OCTOBER -> 10
+            Month.NOVEMBER -> 11
+            Month.DECEMBER -> 12
+        }
     }
 }
