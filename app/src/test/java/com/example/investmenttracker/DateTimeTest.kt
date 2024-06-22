@@ -52,7 +52,35 @@ class DateTimeTest {
         // TODO: write
     }
 
-    // TODO: write rest of isEarlierThan tests
+    @Test
+    fun testIsEarlierThanOnlyYearEarlier() {
+        // TODO: write
+    }
+
+    @Test
+    fun testIsEarlierThanOnlyMonthEarlier() {
+        // TODO: write
+    }
+
+    @Test
+    fun testIsEarlierThanOnlyDayEarlier() {
+        // TODO: write
+    }
+
+    @Test
+    fun testIsEarlierThanOnlyHourEarlier() {
+        // TODO: write
+    }
+
+    @Test
+    fun testIsEarlierThanOnlyMinuteEarlier() {
+        // TODO: write
+    }
+
+    @Test
+    fun testIsEarlierThanAllEarlier() {
+        // TODO: write
+    }
 
     @Test
     fun testToJsonNoNull() {
