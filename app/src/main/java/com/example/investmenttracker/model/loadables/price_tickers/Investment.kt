@@ -30,6 +30,8 @@ class Investment(
             throw IllegalArgumentException("Investment principal is not greater than zero")
     }
 
+    // FIXME: should getPriceAt return closest older datetime's price if no price data from specified datetime is available?
+
     /**
      * @param dateTime The date and time to get the price at
      * @return The price of this, in USD, at the given dateTime if the given dateTime is contained;

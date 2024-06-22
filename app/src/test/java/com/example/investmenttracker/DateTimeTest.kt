@@ -28,6 +28,33 @@ class DateTimeTest {
     }
 
     @Test
+    fun testIsEarlierThanYearTieBreaker() {
+        // TODO: write
+    }
+
+    @Test
+    fun testIsEarlierThanMonthTieBreaker() {
+        // TODO: write
+    }
+
+    @Test
+    fun testIsEarlierThanDayTieBreaker() {
+        // TODO: write
+    }
+
+    @Test
+    fun testIsEarlierThanHourTieBreaker() {
+        // TODO: write
+    }
+
+    @Test
+    fun testIsEarlierThanMinuteTieBreaker() {
+        // TODO: write
+    }
+
+    // TODO: write rest of isEarlierThan tests
+
+    @Test
     fun testToJsonNoNull() {
         val dateTime = DateTime(2024, Month.JANUARY, 8, 9, 7)
         assertEquals(
